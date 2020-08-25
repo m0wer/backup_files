@@ -35,8 +35,8 @@ at *rp1/etc/hostname*.
 
    Optionally, add a remote upstream to this repo.
 
-1. Copy and edit the playbook variables to your inventory file, which you can
-   place under *custom/* since its gitignored.
+1. Copy and edit the playbook variables from *group_vars/all.yml* to your
+   inventory file, which you can place under *custom/* since its gitignored.
 
    An example inventory (*custom/home_servers/hosts.yml*) could look like:
 
