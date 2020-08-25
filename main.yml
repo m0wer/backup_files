@@ -1,0 +1,37 @@
+---
+
+- name: Copy remote files to the local git repo
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Copy remote files to the local git repo
+      fetch:
+        src: "{{ item }}"
+        dest: "{{ local_git_repo_path }}"
+        fail_on_missing: "{{ fetch_fail_on_missing | default(true) }}"
+      with_items: "{{ backup_files }}"
+      register: copy_remote_files
+  tags: copy_remote_files
+
+- name: Commit local changes
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Commit local changes
+      local_action:
+        module: shell
+        cmd: |
+          git add {{ inventory_hostname }}/.
+          git commit -m "Config snapshot of {{ inventory_hostname }} taken  at $(date +"%Y-%m-%d %H:%M:%S")."
+        chdir: "{{ local_git_repo_path }}"
+      when: copy_remote_files.changed
+    - name: Push local commits
+      local_action:
+        module: shell
+        cmd: |
+          git push
+        chdir: "{{ local_git_repo_path }}"
+      run_once: true
+      when: git_push_changes | default(false)
