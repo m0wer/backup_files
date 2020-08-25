@@ -13,6 +13,22 @@ path in a folder named as the remote host's. For example, the file
 */etc/hostname* from the host *rpi1* will be stored in the local git repository
 at *rp1/etc/hostname*.
 
+## How it works
+
+This playbook will:
+
+1. Check for changes and copy the selected backup files that changed from the
+   remote hosts to the local git folder.
+1. Commit the changes of the copied files if any of them changed.
+
+   This is done per host. The commit message will look like:
+
+   ```
+   Config snapshot of rpi1 taken at 2020-08-25 19:13:12.
+   ```
+
+1. Run `git push` from the local machine on the local git folder.
+
 ## Requirements
 
 * Ansible (both in the local machine and the remote one(s)).
@@ -93,10 +109,16 @@ at *rp1/etc/hostname*.
      - /etc/hosts
    ```
 
-* `local_git_repo_path`: Local path for the git repository where the remote
-  files will be saved. For example: `/home/user/conf_backup`.
+* `fetch_fail_on_missing`: (Default: `true`) Boolen value on whether the
+  `fetch` module should fail it the remote file doesn't exist or not.
+
+  Setting it to `false` might be convenient if you want to set the
+  `backup_files` for a gorup of the hosts but not all of them contain all of
+  the files.
 * `git_push_changes`: (Default: `false`) Boolean value, whether to push changes
   from the local git repository to a remote one or not. For example: `true`.
+* `local_git_repo_path`: Local path for the git repository where the remote
+  files will be saved. For example: `/home/user/conf_backup`.
 
 ## Author
 
