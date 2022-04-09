@@ -26,6 +26,7 @@
           git add {{ inventory_hostname }}/.
           git commit -m "Config snapshot of {{ inventory_hostname }} taken  at $(date +"%Y-%m-%d %H:%M:%S")."
         chdir: "{{ local_git_repo_path }}"
+      run_once: True
       when: copy_remote_files.changed
     - name: Push local commits
       local_action:
